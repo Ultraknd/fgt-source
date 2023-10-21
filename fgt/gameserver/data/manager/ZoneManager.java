@@ -68,7 +68,7 @@ public class ZoneManager implements IXmlReader
 		Constructor<?> zoneConstructor;
 		try
 		{
-			zoneConstructor = Class.forName("net.sf.l2j.gameserver.model.zone.type." + zoneType).getConstructor(int.class);
+			zoneConstructor = Class.forName("fgt.gameserver.model.zone.type." + zoneType).getConstructor(int.class);
 		}
 		catch (Exception e)
 		{

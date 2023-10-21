@@ -57,7 +57,7 @@ public final class ScriptData implements IXmlReader, Runnable
 			try
 			{
 				// Create the script.
-				Quest instance = (Quest) Class.forName("net.sf.l2j.gameserver.scripting." + path).getDeclaredConstructor().newInstance();
+				Quest instance = (Quest) Class.forName("fgt.gameserver.scripting." + path).getDeclaredConstructor().newInstance();
 				
 				// Add quest, script, AI or any other custom type of script.
 				_quests.add(instance);

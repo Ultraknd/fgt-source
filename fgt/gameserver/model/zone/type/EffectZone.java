@@ -81,7 +81,7 @@ public class EffectZone extends ZoneType
 	{
 		try
 		{
-			if (!(Class.forName("net.sf.l2j.gameserver.model.actor." + _target).isInstance(character)))
+			if (!(Class.forName("fgt.gameserver.model.actor." + _target).isInstance(character)))
 				return false;
 		}
 		catch (ClassNotFoundException e)

@@ -68,7 +68,7 @@ public class EffectTemplate
 		
 		try
 		{
-			_func = Class.forName("net.sf.l2j.gameserver.skills.effects.Effect" + funcName);
+			_func = Class.forName("fgt.gameserver.skills.effects.Effect" + funcName);
 		}
 		catch (ClassNotFoundException e)
 		{

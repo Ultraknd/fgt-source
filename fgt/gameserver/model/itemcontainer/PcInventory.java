@@ -212,7 +212,7 @@ public class PcInventory extends Inventory
 	/**
 	 * @param itemId
 	 * @return
-	 * @see net.sf.l2j.gameserver.model.itemcontainer.PcInventory#getAllItemsByItemId(int, boolean)
+	 * @see fgt.gameserver.model.itemcontainer.PcInventory#getAllItemsByItemId(int, boolean)
 	 */
 	public ItemInstance[] getAllItemsByItemId(int itemId)
 	{
@@ -243,7 +243,7 @@ public class PcInventory extends Inventory
 	 * @param itemId
 	 * @param enchantment
 	 * @return
-	 * @see net.sf.l2j.gameserver.model.itemcontainer.PcInventory#getAllItemsByItemId(int, int, boolean)
+	 * @see fgt.gameserver.model.itemcontainer.PcInventory#getAllItemsByItemId(int, int, boolean)
 	 */
 	public ItemInstance[] getAllItemsByItemId(int itemId, int enchantment)
 	{

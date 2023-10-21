@@ -145,7 +145,7 @@ public final class DocumentItem extends DocumentBase
 			return; // item is already created
 		try
 		{
-			Constructor<?> c = Class.forName("net.sf.l2j.gameserver.model.item.kind." + _currentItem.type).getConstructor(StatSet.class);
+			Constructor<?> c = Class.forName("fgt.gameserver.model.item.kind." + _currentItem.type).getConstructor(StatSet.class);
 			_currentItem.item = (Item) c.newInstance(_currentItem.set);
 		}
 		catch (Exception e)

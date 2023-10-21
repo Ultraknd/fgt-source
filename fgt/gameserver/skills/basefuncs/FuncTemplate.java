@@ -29,7 +29,7 @@ public final class FuncTemplate
 		
 		try
 		{
-			final Class<?> functionClass = Class.forName("net.sf.l2j.gameserver.skills.basefuncs.Func" + function);
+			final Class<?> functionClass = Class.forName("fgt.gameserver.skills.basefuncs.Func" + function);
 			_constructor = functionClass.getConstructor(Object.class, Stats.class, Double.TYPE, Condition.class);
 		}
 		catch (ClassNotFoundException | NoSuchMethodException e)

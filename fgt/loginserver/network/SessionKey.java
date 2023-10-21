@@ -7,7 +7,7 @@ import fgt.Config;
  * This class is used to represent session keys used by the client to authenticate in the gameserver
  * </p>
  * <p>
- * A SessionKey is made up of two 8 bytes keys. One is send in the {@link net.sf.l2j.loginserver.network.serverpackets.LoginOk LoginOk} packet and the other is sent in {@link net.sf.l2j.loginserver.network.serverpackets.PlayOk PlayOk}
+ * A SessionKey is made up of two 8 bytes keys. One is send in the {@link fgt.loginserver.network.serverpackets.LoginOk LoginOk} packet and the other is sent in {@link fgt.loginserver.network.serverpackets.PlayOk PlayOk}
  * </p>
  */
 public class SessionKey

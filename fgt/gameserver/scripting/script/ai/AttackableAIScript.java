@@ -23,7 +23,7 @@ import fgt.gameserver.skills.L2Skill;
 
 public class AttackableAIScript extends Quest
 {
-	private static final String ACTOR_INSTANCE_PACKAGE = "net.sf.l2j.gameserver.model.actor.instance.";
+	private static final String ACTOR_INSTANCE_PACKAGE = "fgt.gameserver.model.actor.instance.";
 	
 	/**
 	 * Implicit constructor for generic AI script.<br>

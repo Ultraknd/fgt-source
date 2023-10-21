@@ -99,7 +99,7 @@ public class DerbyTrackManager
 				if (template == null)
 					continue;
 				
-				final Constructor<?> constructor = Class.forName("net.sf.l2j.gameserver.model.actor.instance." + template.getType()).getConstructors()[0];
+				final Constructor<?> constructor = Class.forName("fgt.gameserver.model.actor.instance." + template.getType()).getConstructors()[0];
 				
 				_runners.add((Npc) constructor.newInstance(IdFactory.getInstance().getNextId(), template));
 			}

@@ -28,7 +28,7 @@ public class L2SkillCreateItem extends L2Skill
 	}
 	
 	/**
-	 * @see net.sf.l2j.gameserver.skills.L2Skill#useSkill(net.sf.l2j.gameserver.model.actor.Creature, net.sf.l2j.gameserver.model.WorldObject[])
+	 * @see fgt.gameserver.skills.L2Skill#useSkill(fgt.gameserver.model.actor.Creature, fgt.gameserver.model.WorldObject[])
 	 */
 	@Override
 	public void useSkill(Creature activeChar, WorldObject[] targets)

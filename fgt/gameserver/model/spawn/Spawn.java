@@ -49,9 +49,9 @@ public final class Spawn implements Runnable
 		Class<?>[] parameters =
 		{
 			int.class,
-			Class.forName("net.sf.l2j.gameserver.model.actor.template.NpcTemplate")
+			Class.forName("fgt.gameserver.model.actor.template.NpcTemplate")
 		};
-		_constructor = Class.forName("net.sf.l2j.gameserver.model.actor.instance." + _template.getType()).getConstructor(parameters);
+		_constructor = Class.forName("fgt.gameserver.model.actor.instance." + _template.getType()).getConstructor(parameters);
 	}
 	
 	public Spawn(int id) throws SecurityException, ClassNotFoundException, NoSuchMethodException
@@ -70,9 +70,9 @@ public final class Spawn implements Runnable
 		Class<?>[] parameters =
 		{
 			int.class,
-			Class.forName("net.sf.l2j.gameserver.model.actor.template.NpcTemplate")
+			Class.forName("fgt.gameserver.model.actor.template.NpcTemplate")
 		};
-		_constructor = Class.forName("net.sf.l2j.gameserver.model.actor.instance." + _template.getType()).getConstructor(parameters);
+		_constructor = Class.forName("fgt.gameserver.model.actor.instance." + _template.getType()).getConstructor(parameters);
 	}
 	
 	/**
