@@ -3371,7 +3371,7 @@ public final class Player extends Playable
 	{
 		// We reward all skills to the players, but don't store autoGet skills on the database.
 		for (final GeneralSkillNode skill : getAllAvailableSkills())
-			addSkill(skill.getSkill(), skill.getCost() != 0);
+			addSkill(skill.getSkill(), skill.getCost() != 0, true); //Fix for shortcut skills by The Ra
 		
 		// Remove the Lucky skill if level superior to 10.
 		if (getStatus().getLevel() >= 10 && hasSkill(L2Skill.SKILL_LUCKY))
