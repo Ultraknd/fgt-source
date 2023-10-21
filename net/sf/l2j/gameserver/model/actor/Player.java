@@ -1349,7 +1349,8 @@ public final class Player extends Playable
 				_clan.broadcastToMembers(new PledgeShowMemberListUpdate(this));
 			
 			if (Config.AUTO_LEARN_SKILLS)
-				rewardSkills();
+				
+				rewardSkills();			
 		}
 		finally
 		{
@@ -3342,7 +3343,9 @@ public final class Player extends Playable
 	public void giveSkills()
 	{
 		if (Config.AUTO_LEARN_SKILLS)
+		{
 			rewardSkills();
+		}
 		else
 		{
 			// We reward all autoGet skills to this player, but don't store any on database.
@@ -5828,15 +5831,8 @@ public final class Player extends Playable
 		final SkillList sl = new SkillList();
 		for (final L2Skill skill : getSkills().values())
 			sl.addSkill(skill.getId(), skill.getLevel(), skill.isPassive(), isWearingFormalWear || (skill.isClanSkill() && isClanDisabled));
-		
-		rewardSkills();
-		sendPacket(sl);
-		// Фикс отображения корректных уровней скиллов на панели после повышения уровня персонажа
-		for (final L2Skill skill : getSkills().values())
-		{
-			sl.addSkill(skill.getId(), skill.getLevel(), skill.isPassive(), isWearingFormalWear || (skill.isClanSkill() && isClanDisabled));
-			sendPacket(new ShortBuffStatusUpdate(skill.getId(), skill.getLevel(), 0));
-		}
+			
+		sendPacket(sl);		
 	}
 	
 	/**

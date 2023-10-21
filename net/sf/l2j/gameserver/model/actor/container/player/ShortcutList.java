@@ -32,6 +32,8 @@ public class ShortcutList extends ConcurrentSkipListMap<Integer, Shortcut>
 	
 	private static final int MAX_SHORTCUTS_PER_BAR = 12;
 	
+	private Shortcut _shortcut;
+	
 	private final Player _owner;
 	
 	public ShortcutList(Player owner)
@@ -222,6 +224,7 @@ public class ShortcutList extends ConcurrentSkipListMap<Integer, Shortcut>
 				shortcut.setLevel(level);
 				
 				_owner.sendPacket(new ShortCutRegister(_owner, shortcut));
+				_owner.getShortcutList().restore();
 			}
 		}
 	}
