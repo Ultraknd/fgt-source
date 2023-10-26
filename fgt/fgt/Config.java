@@ -5,6 +5,7 @@ import fgt.commons.logging.CLogger;
 import fgt.commons.math.MathUtil;
 import fgt.gameserver.enums.GeoType;
 import fgt.gameserver.model.holder.IntIntHolder;
+import fgt.gameserver.model.location.Location;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +32,35 @@ public final class Config
 	public static final String SERVER_FILE = "./config/server.properties";
 	public static final String SIEGE_FILE = "./config/siege.properties";
 
+	public static final String AUCTION_FILE = "./config/CharacterAuction.properties";
+
+
+	/** Auction */
+	public static boolean AUCTION_ENABLE;
+	public static boolean AUCTION_ALLOW_SALE_AUGUMENT_ITEMS;
+	public static boolean AUCTION_LOG;
+	public static int AUCTION_NPC_ID;
+	public static String AUCTION_NPC_NAME;
+	public static String AUCTION_NPC_TITLE;
+	public static boolean AUCTION_PERCENTAGE;
+	public static int AUCTION_GET_PERCENT;
+	public static int[] AUCTION_PRICE;
+	public static int[] AUCTION_AUGMENT_PRICE;
+	public static int[] AUCTION_ALLOWED_ITEM_ID;
+	public static int AUCTION_COUNT_DAY_FOR_DELETE_ITEM;
+	public static int AUCTION_SEE_COUNT_PRODUCTS_ON_PAGE;
+	public static boolean AUCTION_ALLOW_SALE_MATERIALS;
+	public static boolean AUCTION_ALLOW_SALE_RECIPE;
+	public static boolean AUCTION_ALLOW_SALE_ENCHANT_ITEMS;
+	public static boolean AUCTION_ALLOW_SALE_BOOKS;
+	public static boolean AUCTION_ALLOW_SALE_SCROLL;
+	public static boolean AUCTION_ALLOW_SALE_D_GRADE;
+	public static boolean AUCTION_ALLOW_SALE_C_GRADE;
+	public static boolean AUCTION_ALLOW_SALE_B_GRADE;
+	public static boolean AUCTION_ALLOW_SALE_A_GRADE;
+	public static boolean AUCTION_ALLOW_SALE_S_GRADE;
+	public static boolean AUCTION_ALLOW_SALE_EPIC;
+	public static ArrayList<Location> AUCTION_NPC_SPAWN_LOC = new ArrayList<>();
 
 	/** MostWanted Config by The Ra */
 	public static boolean MOSTWANTED_ON;
@@ -649,6 +679,67 @@ public final class Config
 		}
 
 		return result;
+	}
+
+	/**
+	 * Loads Auction settings.
+	 */
+	private static final void loadAuction()
+	{
+		final ExProperties auction = initProperties(AUCTION_FILE);
+		AUCTION_ENABLE = auction.getProperty("AuctionEnable", true);
+		AUCTION_LOG = auction.getProperty("AuctionLogEnable", false);
+		AUCTION_NPC_ID = auction.getProperty("AuctionNpcId", 50004);
+		AUCTION_NPC_NAME = auction.getProperty("AuctionNpcName", "Auction");
+		AUCTION_NPC_TITLE = auction.getProperty("AuctionNpcTitle", "Server");
+
+		String[] locationServiceManager = auction.getProperty("ServicesManagerLocation", "").split(";");
+		try
+		{
+			if(locationServiceManager != null)
+			{
+				int h = 0;
+				for(String loc : locationServiceManager)
+				{
+					String[] pointFinalLoc = loc.split(",");
+					//if(pointFinalLoc.length > 3)
+					// h = Integer.parseInt(pointFinalLoc[3]);
+					AUCTION_NPC_SPAWN_LOC.add(new Location(Integer.parseInt(pointFinalLoc[0]), Integer.parseInt(pointFinalLoc[1]), Integer.parseInt(pointFinalLoc[2])));
+				}
+			}
+		}
+		catch(Exception e)
+		{}
+
+		AUCTION_PERCENTAGE = auction.getProperty("AuctionPercentage", false);
+		AUCTION_GET_PERCENT = auction.getProperty("AuctionGetPercent", 10);
+		String[] temp = auction.getProperty("AuctionPrice", "57 1000").split(",");
+		AUCTION_PRICE = new int[2];
+		AUCTION_PRICE[0] = Integer.parseInt(temp[0]);
+		AUCTION_PRICE[1] = Integer.parseInt(temp[1]);
+		temp = auction.getProperty("AuctionAugmentPrice", "4037 5").split(",");
+		AUCTION_AUGMENT_PRICE = new int[2];
+		AUCTION_AUGMENT_PRICE[0] = Integer.parseInt(temp[0]);
+		AUCTION_AUGMENT_PRICE[1] = Integer.parseInt(temp[1]);
+		temp = auction.getProperty("AuctionAllowedItemId", "57 4037").split(",");
+		AUCTION_ALLOWED_ITEM_ID = new int[temp.length];
+
+		for (int i = 0; i <= temp.length - 1; i++)
+			AUCTION_ALLOWED_ITEM_ID[i] = Integer.parseInt(temp[i]);
+		AUCTION_COUNT_DAY_FOR_DELETE_ITEM = auction.getProperty("AuctionCountDayForDeleteItem", 7);
+		AUCTION_SEE_COUNT_PRODUCTS_ON_PAGE =auction.getProperty("AuctionSeeCountProductsOnPage", 5);
+		AUCTION_ALLOW_SALE_MATERIALS = auction.getProperty("AuctionAllowSaleMaterials", true);
+		AUCTION_ALLOW_SALE_RECIPE = auction.getProperty("AuctionAllowSaleRecipe", true);
+		AUCTION_ALLOW_SALE_ENCHANT_ITEMS = auction.getProperty("AuctionAllowSaleEnchant", true);
+		AUCTION_ALLOW_SALE_AUGUMENT_ITEMS = auction.getProperty("AuctionAllowSaleAugement", true);
+		AUCTION_ALLOW_SALE_BOOKS = auction.getProperty("AuctionAllowSaleBooks", true);
+		AUCTION_ALLOW_SALE_SCROLL = auction.getProperty("AuctionAllowSaleScroll", true);
+		AUCTION_ALLOW_SALE_D_GRADE = auction.getProperty("AuctionAllowSaleDGrade", true);
+		AUCTION_ALLOW_SALE_C_GRADE = auction.getProperty("AuctionAllowSaleCGrade", true);
+		AUCTION_ALLOW_SALE_B_GRADE = auction.getProperty("AuctionAllowSaleBGrade", true);
+		AUCTION_ALLOW_SALE_A_GRADE = auction.getProperty("AuctionAllowSaleAGrade", true);
+		AUCTION_ALLOW_SALE_S_GRADE = auction.getProperty("AuctionAllowSaleSGrade", true);
+		AUCTION_ALLOW_SALE_EPIC = auction.getProperty("AuctionAllowSaleEpic", true);
 	}
 
 	/**

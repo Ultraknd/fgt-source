@@ -13,7 +13,9 @@ import fgt.gameserver.model.zone.type.subtype.ZoneType;
 import fgt.gameserver.network.serverpackets.CreatureSay;
 import fgt.gameserver.network.serverpackets.L2GameServerPacket;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -294,5 +296,62 @@ public final class World
 				return plr;
 		}
 		return null;
+	}
+	public Npc getNpcById(int npcId)
+	{
+		Npc result = null;
+		for (Object _npc : _objects.values())
+		{
+			if (_npc instanceof Npc)
+			{
+				if (((Npc) _npc).getNpcId() == npcId)
+				{
+					if (!((Npc) _npc).isDead())
+					{
+						return (Npc) _npc;
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	public List<Npc> getAllByNpcId(int npcid, boolean justAlive)
+	{
+		List<Npc> result = new ArrayList<>();
+		for (Object _npc : _objects.values())
+		{
+			if (_npc instanceof Npc)
+			{
+				Npc _result = (Npc) _npc;
+				if ((_result.getTemplate() != null) && (npcid == _result.getTemplate().getNpcId()) && (!justAlive || !_result.isDead()))
+				{
+					result.add(_result);
+				}
+			}
+		}
+		return result;
+	}
+
+	public List<Npc> getAllByNpcId(int[] npc_ids, boolean justAlive)
+	{
+		List<Npc> result = new ArrayList<>();
+		for (Object _npc : _objects.values())
+		{
+			if (_npc instanceof Npc)
+			{
+				if (!justAlive || !((Npc) _npc).isDead())
+				{
+					for (int npc_id : npc_ids)
+					{
+						if (npc_id == ((Npc) _npc).getNpcId())
+						{
+							result.add(((Npc) _npc));
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 }

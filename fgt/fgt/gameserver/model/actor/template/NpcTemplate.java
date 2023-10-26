@@ -30,9 +30,9 @@ public class NpcTemplate extends CreatureTemplate
 	private final int _npcId;
 	private final int _idTemplate;
 	private final String _type;
-	private final String _name;
+	private String _name;
 	private boolean _usingServerSideName;
-	private final String _title;
+	private String _title;
 	private boolean _usingServerSideTitle;
 	private final byte _level;
 	private final int _exp;
@@ -247,6 +247,16 @@ public class NpcTemplate extends CreatureTemplate
 			return;
 		
 		_race = NpcRace.VALUES[raceId];
+	}
+
+	public void setTitle(String title)
+	{
+		_title = title;
+	}
+
+	public void setName(String name)
+	{
+		_name = name;
 	}
 	
 	public NpcAiType getAiType()

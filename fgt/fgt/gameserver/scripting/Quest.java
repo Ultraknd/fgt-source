@@ -2264,4 +2264,9 @@ public class Quest
 	public void onGameTime(int gameTime)
 	{
 	}
+
+	public String onEvent(String event, QuestState qs)
+	{
+		return null;
+	}
 }

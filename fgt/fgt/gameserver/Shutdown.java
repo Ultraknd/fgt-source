@@ -28,6 +28,9 @@ import fgt.gameserver.network.serverpackets.ServerClose;
 import fgt.gameserver.network.serverpackets.SystemMessage;
 import fgt.gameserver.taskmanager.ItemsOnGroundTaskManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class provides functions for shutting down and restarting the server. It closes all client connections and saves data.
  */
@@ -36,6 +39,8 @@ public class Shutdown extends Thread
 	private static final CLogger LOGGER = new CLogger(Shutdown.class.getName());
 	
 	private static Shutdown _counterInstance = null;
+
+	private List<Runnable> _shutdownHandlers;
 	
 	private int _secondsShut;
 	private int _shutdownMode;
@@ -56,6 +61,8 @@ public class Shutdown extends Thread
 	{
 		_secondsShut = -1;
 		_shutdownMode = SIGTERM;
+
+		_shutdownHandlers = new ArrayList<>();
 	}
 	
 	public Shutdown(int seconds, boolean restart)
@@ -365,5 +372,17 @@ public class Shutdown extends Thread
 	private static class SingletonHolder
 	{
 		protected static final Shutdown INSTANCE = new Shutdown();
+	}
+
+	/**
+	 * this function is called, when a new thread starts if this thread is the thread of getInstance, then this is the shutdown hook and we save all data and disconnect all clients. after this thread ends, the server will completely exit if this is not the thread of getInstance, then this is a
+	 * countdown thread. we start the countdown, and when we finished it, and it was not aborted, we tell the shutdown-hook why we call exit, and then call exit when the exit status of the server is 1, startServer.sh / startServer.bat will restart the server.
+	 */
+	public void registerShutdownHandler(Runnable r)
+	{
+		if (!_shutdownHandlers.contains(r))
+		{
+			_shutdownHandlers.add(r);
+		}
 	}
 }
