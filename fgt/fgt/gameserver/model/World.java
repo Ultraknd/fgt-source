@@ -1,11 +1,6 @@
 package fgt.gameserver.model;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import fgt.commons.logging.CLogger;
-
 import fgt.gameserver.data.sql.PlayerInfoTable;
 import fgt.gameserver.data.sql.SpawnTable;
 import fgt.gameserver.enums.SayType;
@@ -17,6 +12,10 @@ import fgt.gameserver.model.spawn.Spawn;
 import fgt.gameserver.model.zone.type.subtype.ZoneType;
 import fgt.gameserver.network.serverpackets.CreatureSay;
 import fgt.gameserver.network.serverpackets.L2GameServerPacket;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class World
 {
@@ -284,5 +283,16 @@ public final class World
 	private static class SingletonHolder
 	{
 		protected static final World INSTANCE = new World();
+	}
+
+	//Event Most Wanted [MOD BY The Ra]
+	public Player getMostWantedPlayer()
+	{
+		for (Player plr : _players.values())
+		{
+			if(plr.isOnline() && plr.isMostWanted())
+				return plr;
+		}
+		return null;
 	}
 }

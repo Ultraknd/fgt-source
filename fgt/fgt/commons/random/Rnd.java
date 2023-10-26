@@ -113,4 +113,15 @@ public final class Rnd
 	{
 		return array[get(array.length)];
 	}
+
+	/********* Рандом случайного шанса by The Ra *********/
+	public static boolean chance(int chance)
+	{
+		return (chance >= 1) && ((chance > 99) || ((nextInt() + 1) <= chance));
+	}
+
+	public static boolean chance(double chance)
+	{
+		return nextDouble() <= (chance / 100.);
+	}
 }

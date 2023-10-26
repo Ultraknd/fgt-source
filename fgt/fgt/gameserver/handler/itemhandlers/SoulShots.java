@@ -1,7 +1,7 @@
 package fgt.gameserver.handler.itemhandlers;
 
+import fgt.Config;
 import fgt.commons.random.Rnd;
-
 import fgt.gameserver.enums.items.ShotType;
 import fgt.gameserver.handler.IItemHandler;
 import fgt.gameserver.model.actor.Playable;
@@ -49,13 +49,16 @@ public class SoulShots implements IItemHandler
 		int ssCount = weaponItem.getSoulShotCount();
 		if (weaponItem.getReducedSoulShot() > 0 && Rnd.get(100) < weaponItem.getReducedSoulShotChance())
 			ssCount = weaponItem.getReducedSoulShot();
-		
-		if (!player.destroyItemWithoutTrace(item.getObjectId(), ssCount))
+		// Не использовать SS
+		if(!Config.DONT_DESTROY_SS)
 		{
-			if (!player.disableAutoShot(item.getItemId()))
-				player.sendPacket(SystemMessageId.NOT_ENOUGH_SOULSHOTS);
+			if (!player.destroyItemWithoutTrace(item.getObjectId(), ssCount))
+			{
+				if (!player.disableAutoShot(item.getItemId()))
+					player.sendPacket(SystemMessageId.NOT_ENOUGH_SOULSHOTS);
 			
-			return;
+				return;
+			}
 		}
 		
 		final IntIntHolder[] skills = item.getItem().getSkills();

@@ -1,83 +1,28 @@
 package fgt.gameserver.model.actor;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
-
+import fgt.Config;
+import fgt.commons.lang.MySQL;
+import fgt.commons.lang.Strings;
 import fgt.commons.math.MathUtil;
 import fgt.commons.pool.ConnectionPool;
 import fgt.commons.pool.ThreadPool;
 import fgt.commons.random.Rnd;
 import fgt.commons.util.ArraysUtil;
-
-import fgt.Config;
 import fgt.gameserver.LoginServerThread;
 import fgt.gameserver.communitybbs.CommunityBoard;
 import fgt.gameserver.communitybbs.model.Forum;
 import fgt.gameserver.data.SkillTable;
 import fgt.gameserver.data.SkillTable.FrequentSkill;
-import fgt.gameserver.data.manager.CastleManager;
-import fgt.gameserver.data.manager.CoupleManager;
-import fgt.gameserver.data.manager.CursedWeaponManager;
-import fgt.gameserver.data.manager.DimensionalRiftManager;
-import fgt.gameserver.data.manager.FestivalOfDarknessManager;
-import fgt.gameserver.data.manager.HeroManager;
-import fgt.gameserver.data.manager.PartyMatchRoomManager;
-import fgt.gameserver.data.manager.SevenSignsManager;
-import fgt.gameserver.data.manager.ZoneManager;
+import fgt.gameserver.data.manager.*;
 import fgt.gameserver.data.sql.ClanTable;
 import fgt.gameserver.data.sql.PlayerInfoTable;
-import fgt.gameserver.data.xml.AdminData;
-import fgt.gameserver.data.xml.ItemData;
-import fgt.gameserver.data.xml.MapRegionData;
+import fgt.gameserver.data.xml.*;
 import fgt.gameserver.data.xml.MapRegionData.TeleportType;
-import fgt.gameserver.data.xml.NpcData;
-import fgt.gameserver.data.xml.PlayerData;
-import fgt.gameserver.data.xml.PlayerLevelData;
-import fgt.gameserver.enums.AiEventType;
-import fgt.gameserver.enums.CabalType;
-import fgt.gameserver.enums.GaugeColor;
-import fgt.gameserver.enums.LootRule;
-import fgt.gameserver.enums.MessageType;
-import fgt.gameserver.enums.Paperdoll;
-import fgt.gameserver.enums.PunishmentType;
-import fgt.gameserver.enums.ShortcutType;
-import fgt.gameserver.enums.SpawnType;
-import fgt.gameserver.enums.StatusType;
-import fgt.gameserver.enums.TeamType;
-import fgt.gameserver.enums.TeleportMode;
-import fgt.gameserver.enums.ZoneId;
-import fgt.gameserver.enums.actors.ClassId;
-import fgt.gameserver.enums.actors.ClassRace;
-import fgt.gameserver.enums.actors.ClassType;
-import fgt.gameserver.enums.actors.MoveType;
-import fgt.gameserver.enums.actors.OperateType;
-import fgt.gameserver.enums.actors.Sex;
-import fgt.gameserver.enums.actors.WeightPenalty;
+import fgt.gameserver.enums.*;
+import fgt.gameserver.enums.actors.*;
 import fgt.gameserver.enums.bbs.ForumAccess;
 import fgt.gameserver.enums.bbs.ForumType;
-import fgt.gameserver.enums.items.ActionType;
-import fgt.gameserver.enums.items.EtcItemType;
-import fgt.gameserver.enums.items.ItemLocation;
-import fgt.gameserver.enums.items.ItemState;
-import fgt.gameserver.enums.items.ShotType;
-import fgt.gameserver.enums.items.WeaponType;
+import fgt.gameserver.enums.items.*;
 import fgt.gameserver.enums.skills.EffectFlag;
 import fgt.gameserver.enums.skills.EffectType;
 import fgt.gameserver.enums.skills.Stats;
@@ -94,27 +39,9 @@ import fgt.gameserver.model.actor.ai.type.PlayerAI;
 import fgt.gameserver.model.actor.attack.PlayerAttack;
 import fgt.gameserver.model.actor.cast.PlayerCast;
 import fgt.gameserver.model.actor.container.npc.RewardInfo;
-import fgt.gameserver.model.actor.container.player.Appearance;
-import fgt.gameserver.model.actor.container.player.BlockList;
-import fgt.gameserver.model.actor.container.player.CubicList;
-import fgt.gameserver.model.actor.container.player.FishingStance;
-import fgt.gameserver.model.actor.container.player.HennaList;
-import fgt.gameserver.model.actor.container.player.MacroList;
-import fgt.gameserver.model.actor.container.player.Punishment;
 import fgt.gameserver.model.actor.container.player.QuestList;
-import fgt.gameserver.model.actor.container.player.RadarList;
-import fgt.gameserver.model.actor.container.player.RecipeBook;
-import fgt.gameserver.model.actor.container.player.Request;
-import fgt.gameserver.model.actor.container.player.ShortcutList;
-import fgt.gameserver.model.actor.container.player.SubClass;
-import fgt.gameserver.model.actor.instance.Door;
-import fgt.gameserver.model.actor.instance.FestivalMonster;
-import fgt.gameserver.model.actor.instance.Folk;
-import fgt.gameserver.model.actor.instance.Pet;
-import fgt.gameserver.model.actor.instance.Servitor;
-import fgt.gameserver.model.actor.instance.StaticObject;
-import fgt.gameserver.model.actor.instance.TamedBeast;
-import fgt.gameserver.model.actor.instance.WeddingManagerNpc;
+import fgt.gameserver.model.actor.container.player.*;
+import fgt.gameserver.model.actor.instance.*;
 import fgt.gameserver.model.actor.move.PlayerMove;
 import fgt.gameserver.model.actor.status.PlayerStatus;
 import fgt.gameserver.model.actor.template.PetTemplate;
@@ -130,12 +57,7 @@ import fgt.gameserver.model.holder.skillnode.GeneralSkillNode;
 import fgt.gameserver.model.item.instance.ItemInstance;
 import fgt.gameserver.model.item.kind.Item;
 import fgt.gameserver.model.item.kind.Weapon;
-import fgt.gameserver.model.itemcontainer.Inventory;
-import fgt.gameserver.model.itemcontainer.ItemContainer;
-import fgt.gameserver.model.itemcontainer.PcFreight;
-import fgt.gameserver.model.itemcontainer.PcInventory;
-import fgt.gameserver.model.itemcontainer.PcWarehouse;
-import fgt.gameserver.model.itemcontainer.PetInventory;
+import fgt.gameserver.model.itemcontainer.*;
 import fgt.gameserver.model.itemcontainer.listeners.ItemPassiveSkillsListener;
 import fgt.gameserver.model.location.Location;
 import fgt.gameserver.model.location.SpawnLocation;
@@ -150,65 +72,7 @@ import fgt.gameserver.model.trade.TradeList;
 import fgt.gameserver.model.zone.type.BossZone;
 import fgt.gameserver.network.GameClient;
 import fgt.gameserver.network.SystemMessageId;
-import fgt.gameserver.network.serverpackets.AbstractNpcInfo;
-import fgt.gameserver.network.serverpackets.ActionFailed;
-import fgt.gameserver.network.serverpackets.ChairSit;
-import fgt.gameserver.network.serverpackets.ChangeWaitType;
-import fgt.gameserver.network.serverpackets.CharInfo;
-import fgt.gameserver.network.serverpackets.ConfirmDlg;
-import fgt.gameserver.network.serverpackets.DeleteObject;
-import fgt.gameserver.network.serverpackets.EtcStatusUpdate;
-import fgt.gameserver.network.serverpackets.ExAutoSoulShot;
-import fgt.gameserver.network.serverpackets.ExOlympiadMode;
-import fgt.gameserver.network.serverpackets.ExServerPrimitive;
-import fgt.gameserver.network.serverpackets.ExSetCompassZoneCode;
-import fgt.gameserver.network.serverpackets.ExStorageMaxCount;
-import fgt.gameserver.network.serverpackets.GetOnVehicle;
-import fgt.gameserver.network.serverpackets.HennaInfo;
-import fgt.gameserver.network.serverpackets.InventoryUpdate;
-import fgt.gameserver.network.serverpackets.ItemList;
-import fgt.gameserver.network.serverpackets.L2FriendStatus;
-import fgt.gameserver.network.serverpackets.L2GameServerPacket;
-import fgt.gameserver.network.serverpackets.LeaveWorld;
-import fgt.gameserver.network.serverpackets.MagicSkillUse;
-import fgt.gameserver.network.serverpackets.MyTargetSelected;
-import fgt.gameserver.network.serverpackets.ObservationMode;
-import fgt.gameserver.network.serverpackets.ObservationReturn;
-import fgt.gameserver.network.serverpackets.PartySmallWindowUpdate;
-import fgt.gameserver.network.serverpackets.PetInventoryUpdate;
-import fgt.gameserver.network.serverpackets.PledgeShowMemberListDelete;
-import fgt.gameserver.network.serverpackets.PledgeShowMemberListUpdate;
-import fgt.gameserver.network.serverpackets.PrivateStoreListBuy;
-import fgt.gameserver.network.serverpackets.PrivateStoreListSell;
-import fgt.gameserver.network.serverpackets.PrivateStoreManageListBuy;
-import fgt.gameserver.network.serverpackets.PrivateStoreManageListSell;
-import fgt.gameserver.network.serverpackets.PrivateStoreMsgBuy;
-import fgt.gameserver.network.serverpackets.PrivateStoreMsgSell;
-import fgt.gameserver.network.serverpackets.RecipeShopManageList;
-import fgt.gameserver.network.serverpackets.RecipeShopMsg;
-import fgt.gameserver.network.serverpackets.RecipeShopSellList;
-import fgt.gameserver.network.serverpackets.RelationChanged;
-import fgt.gameserver.network.serverpackets.Revive;
-import fgt.gameserver.network.serverpackets.Ride;
-import fgt.gameserver.network.serverpackets.SendTradeDone;
-import fgt.gameserver.network.serverpackets.ServerClose;
-import fgt.gameserver.network.serverpackets.SetupGauge;
-import fgt.gameserver.network.serverpackets.ShortBuffStatusUpdate;
-import fgt.gameserver.network.serverpackets.ShortCutInit;
-import fgt.gameserver.network.serverpackets.SkillCoolTime;
-import fgt.gameserver.network.serverpackets.SkillList;
-import fgt.gameserver.network.serverpackets.SocialAction;
-import fgt.gameserver.network.serverpackets.StaticObjectInfo;
-import fgt.gameserver.network.serverpackets.StatusUpdate;
-import fgt.gameserver.network.serverpackets.SystemMessage;
-import fgt.gameserver.network.serverpackets.TargetSelected;
-import fgt.gameserver.network.serverpackets.TargetUnselected;
-import fgt.gameserver.network.serverpackets.TitleUpdate;
-import fgt.gameserver.network.serverpackets.TradePressOtherOk;
-import fgt.gameserver.network.serverpackets.TradePressOwnOk;
-import fgt.gameserver.network.serverpackets.TradeStart;
-import fgt.gameserver.network.serverpackets.UserInfo;
-import fgt.gameserver.network.serverpackets.ValidateLocation;
+import fgt.gameserver.network.serverpackets.*;
 import fgt.gameserver.scripting.QuestState;
 import fgt.gameserver.skills.AbstractEffect;
 import fgt.gameserver.skills.Formulas;
@@ -217,11 +81,19 @@ import fgt.gameserver.skills.effects.EffectTemplate;
 import fgt.gameserver.skills.funcs.FuncHenna;
 import fgt.gameserver.skills.funcs.FuncMaxCpMul;
 import fgt.gameserver.skills.funcs.FuncRegenCpMul;
-import fgt.gameserver.taskmanager.AttackStanceTaskManager;
-import fgt.gameserver.taskmanager.GameTimeTaskManager;
-import fgt.gameserver.taskmanager.PvpFlagTaskManager;
-import fgt.gameserver.taskmanager.ShadowItemTaskManager;
-import fgt.gameserver.taskmanager.WaterTaskManager;
+import fgt.gameserver.taskmanager.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a player in the world.<br>
@@ -267,6 +139,9 @@ public final class Player extends Playable
 
 	private final String _accountName;
 	private long _deleteTimer;
+
+	/** Система MostWanted */
+	private boolean _isMostWanted;
 
 
 	private boolean _isOnline;
@@ -3942,6 +3817,9 @@ public final class Player extends Playable
 
 	protected synchronized void startFeed(int npcId)
 	{
+		if(Config.DONT_USE_PET_HUNGRY)
+			return;
+
 		_canFeed = npcId > 0;
 		if (!isMounted())
 			return;
@@ -7411,5 +7289,140 @@ public final class Player extends Playable
 			gms.add(this);
 
 		return gms;
+	}
+	/**
+	 * @return Возвращает boolean значение
+	 * Для системы MastWanted
+	 **/
+	public final boolean isMostWanted()
+	{
+		return _isMostWanted;
+	}
+
+	/**
+	 * Устанавливает значение _isMostWanted
+	 * Для внешней конфигурации
+	 * @param off
+	 **/
+	public final void setIsMostWanted(boolean off)
+	{
+		_isMostWanted = off;
+	}
+	private final Map<String, Map<String, Long>> user_variables = new ConcurrentHashMap<String, Map<String, Long>>();
+
+	public void loadVariables()
+	{
+		// Connection con = null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		//try
+		try (Connection con = ConnectionPool.getConnection())
+		{
+			// con = L2DatabaseFactory.getInstance().getConnection();
+			st = con.prepareStatement("SELECT * FROM character_variables WHERE obj_id = ?");
+			st.setInt(1, getObjectId());
+			rs = st.executeQuery();
+			while (rs.next())
+			{
+				Map<String, Long> variableEx = new ConcurrentHashMap<String, Long>();
+				String name = rs.getString("name");
+				String value = Strings.stripSlashes(rs.getString("value"));
+				long exp = Long.parseLong(rs.getString("expire_time"));
+				variableEx.put(value, exp);
+				user_variables.put(name, variableEx);
+			}
+		}
+		catch (Exception e)
+		{
+		}
+		finally
+		{
+		}
+	}
+
+	public String getVar(String name)
+	{
+		if(user_variables.containsKey(name))
+			return user_variables.get(name).keySet().toString().substring(1, user_variables.get(name).keySet().toString().length() - 1);
+		return null;
+	}
+
+
+	public boolean getVarB(String name)
+	{
+		String var = getVar(name);
+		return !(var == null || var.equals("0") || var.equalsIgnoreCase("false"));
+	}
+
+	public void unsetVar(String name)
+	{
+		if (name == null)
+			return;
+		if (user_variables.remove(name) != null)
+			MySQL.set("DELETE FROM `character_variables` WHERE `obj_id`=? AND `type`='user-var' AND `name`=? LIMIT 1", getObjectId(), name);
+	}
+
+	public void setVar(String name, String value)
+	{
+		setVar(name, value, -1);
+	}
+
+	public boolean getVarB(String name, boolean defaultVal)
+	{
+		String var = getVar(name);
+		if(var == null)
+			return defaultVal;
+		return !(var.equals("0") || var.equalsIgnoreCase("false"));
+	}
+
+	public long getVarLong(String name)
+	{
+		return getVarLong(name, 0L);
+	}
+
+	public long getVarLong(String name, long defaultVal)
+	{
+		long result = defaultVal;
+		String var = getVar(name);
+		if(var != null)
+			result = Long.parseLong(var);
+		return result;
+	}
+
+	public int getVarInt(String name)
+	{
+		return getVarInt(name, 0);
+	}
+
+	public int getVarInt(String name, int defaultVal)
+	{
+		int result = defaultVal;
+		String var = getVar(name);
+		if(var != null)
+			result = Integer.parseInt(var);
+		return result;
+	}
+
+	public long getVarExp(String name)
+	{
+		return user_variables.get(name).get(getVar(name));
+	}
+
+	public void setVar(String name, String value, long expirationTime)
+	{
+		Map<String, Long> variableEx = new ConcurrentHashMap<String, Long>();
+		variableEx.put(value, expirationTime);
+		user_variables.put(name, variableEx);
+		MySQL.set("REPLACE INTO character_variables (obj_id, type, name, value, expire_time) VALUES (?,'user-var',?,?,?)", getObjectId(), name, value, expirationTime);
+	}
+
+	public void setVar(String name, int value, long expirationTime)
+	{
+		setVar(name, String.valueOf(value), expirationTime);
+	}
+
+	public void setVar(String name, long value, long expirationTime)
+	{
+		setVar(name, String.valueOf(value), expirationTime);
 	}
 }

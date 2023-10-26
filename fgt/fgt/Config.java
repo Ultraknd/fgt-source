@@ -1,22 +1,16 @@
 package fgt;
 
+import fgt.commons.config.ExProperties;
+import fgt.commons.logging.CLogger;
+import fgt.commons.math.MathUtil;
+import fgt.gameserver.enums.GeoType;
+import fgt.gameserver.model.holder.IntIntHolder;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
-import fgt.commons.config.ExProperties;
-import fgt.commons.logging.CLogger;
-import fgt.commons.math.MathUtil;
-
-import fgt.gameserver.enums.GeoType;
-import fgt.gameserver.model.holder.IntIntHolder;
+import java.util.*;
 
 /**
  * This class contains global server configuration.<br>
@@ -38,10 +32,17 @@ public final class Config
 	public static final String SIEGE_FILE = "./config/siege.properties";
 
 
-	/** Buffs time multiplier */
-	public static boolean MULTIPLIERS;
+	/** MostWanted Config by The Ra */
+	public static boolean MOSTWANTED_ON;
+	public static long MOSTWANTED_UPDATE_INTERVAL;
+	public static boolean   MOSTWANTED_REWARD_ITEMS_ENABLE;
+	public static int[][] MOSTWANTED_REWARD_ITEMS;
+	public static int MOSTWANTED_CHANCE;
 
-	public static int BUFF_TIME;
+	/** Бесконечные соски, стрелы, жрачка петов */
+	public static boolean DONT_DESTROY_SS;
+	public static boolean DONT_DESTROY_ARROWS;
+	public static boolean DONT_USE_PET_HUNGRY;
 
 	// --------------------------------------------------
 	// Clans settings
@@ -657,9 +658,17 @@ public final class Config
 	{
 		final ExProperties mods = initProperties(MODS_FILE);
 
-		/** Buff time **/
-		MULTIPLIERS = mods.getProperty("Multipliers", false);
-		BUFF_TIME = mods.getProperty("BuffDuration", 3600);
+		/** MostWanted Event by Angel */
+		MOSTWANTED_UPDATE_INTERVAL = mods.getProperty("MostWantedUpdateInterval", 60) * 60000;
+		MOSTWANTED_ON = mods.getProperty("MostWantedEnable", false);
+		MOSTWANTED_REWARD_ITEMS_ENABLE = mods.getProperty("AllowMostWantedRewardItems", false);
+		MOSTWANTED_REWARD_ITEMS = parseItemsList(mods.getProperty("MostWantedRewardItems", "4037,5"));
+		MOSTWANTED_CHANCE = mods.getProperty("MostWantedChance", 0);
+
+		/** Бесконечные SS/BSS, питомец не голодает**/
+		DONT_DESTROY_SS = mods.getProperty("DontDestroySS", false);
+		DONT_DESTROY_ARROWS = mods.getProperty("DontDestroyArrows", false);
+		DONT_USE_PET_HUNGRY = mods.getProperty("DontPetsHungry", false);
 	}
 
 	/**
@@ -1419,5 +1428,53 @@ public final class Config
 		{
 			return _claimItems.get(job);
 		}
+	}
+
+	/**
+	 * itemId1,itemNumber1;itemId2,itemNumber2... to the int[n][2] = [itemId1][itemNumber1],[itemId2][itemNumber2]...
+	 * @param line
+	 * @return an array consisting of parsed items.
+	 */
+	private static final int[][] parseItemsList(String line)
+	{
+		final String[] propertySplit = line.split(";");
+		if (propertySplit.length == 0)
+			return null;
+
+		int i = 0;
+		String[] valueSplit;
+		final int[][] result = new int[propertySplit.length][];
+		for (String value : propertySplit)
+		{
+			valueSplit = value.split(",");
+			if (valueSplit.length != 2)
+			{
+				LOGGER.warn("Config: Error parsing entry -> \"" + valueSplit[0] + "\", should be itemId,itemNumber");
+				return null;
+			}
+
+			result[i] = new int[2];
+			try
+			{
+				result[i][0] = Integer.parseInt(valueSplit[0]);
+			}
+			catch (NumberFormatException e)
+			{
+				LOGGER.warn("Config: Error parsing item ID -> \"" + valueSplit[0] + "\"");
+				return null;
+			}
+
+			try
+			{
+				result[i][1] = Integer.parseInt(valueSplit[1]);
+			}
+			catch (NumberFormatException e)
+			{
+				LOGGER.warn("Config: Error parsing item amount -> \"" + valueSplit[1] + "\"");
+				return null;
+			}
+			i++;
+		}
+		return result;
 	}
 }

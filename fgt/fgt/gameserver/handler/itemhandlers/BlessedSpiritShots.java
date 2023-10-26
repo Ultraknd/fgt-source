@@ -1,5 +1,6 @@
 package fgt.gameserver.handler.itemhandlers;
 
+import fgt.Config;
 import fgt.gameserver.enums.items.ShotType;
 import fgt.gameserver.handler.IItemHandler;
 import fgt.gameserver.model.actor.Playable;
@@ -43,14 +44,18 @@ public class BlessedSpiritShots implements IItemHandler
 			
 			return;
 		}
-		
-		// Consume bss if player has enough of them
-		if (!player.destroyItemWithoutTrace(item.getObjectId(), weaponItem.getSpiritShotCount()))
+
+		// Не тратить BSS
+		if(!Config.DONT_DESTROY_SS)
 		{
-			if (!player.disableAutoShot(item.getItemId()))
-				player.sendPacket(SystemMessageId.NOT_ENOUGH_SPIRITSHOTS);
+			// Consume bss if player has enough of them
+			if (!player.destroyItemWithoutTrace(item.getObjectId(), weaponItem.getSpiritShotCount()))
+			{
+				if (!player.disableAutoShot(item.getItemId()))
+					player.sendPacket(SystemMessageId.NOT_ENOUGH_SPIRITSHOTS);
 			
-			return;
+				return;
+			}
 		}
 		
 		final IntIntHolder[] skills = item.getItem().getSkills();

@@ -1,11 +1,6 @@
 package fgt.gameserver;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.util.logging.LogManager;
-
+import fgt.Config;
 import fgt.commons.lang.StringUtil;
 import fgt.commons.logging.CLogger;
 import fgt.commons.mmocore.SelectorConfig;
@@ -13,95 +8,32 @@ import fgt.commons.mmocore.SelectorThread;
 import fgt.commons.pool.ConnectionPool;
 import fgt.commons.pool.ThreadPool;
 import fgt.commons.util.SysUtil;
-
-import fgt.Config;
 import fgt.gameserver.communitybbs.CommunityBoard;
 import fgt.gameserver.data.SkillTable;
 import fgt.gameserver.data.cache.CrestCache;
 import fgt.gameserver.data.cache.HtmCache;
-import fgt.gameserver.data.manager.BoatManager;
-import fgt.gameserver.data.manager.BufferManager;
-import fgt.gameserver.data.manager.BuyListManager;
-import fgt.gameserver.data.manager.CastleManager;
-import fgt.gameserver.data.manager.CastleManorManager;
-import fgt.gameserver.data.manager.ClanHallManager;
-import fgt.gameserver.data.manager.CoupleManager;
-import fgt.gameserver.data.manager.CursedWeaponManager;
-import fgt.gameserver.data.manager.DayNightManager;
-import fgt.gameserver.data.manager.DerbyTrackManager;
-import fgt.gameserver.data.manager.DimensionalRiftManager;
-import fgt.gameserver.data.manager.FestivalOfDarknessManager;
-import fgt.gameserver.data.manager.FishingChampionshipManager;
-import fgt.gameserver.data.manager.FourSepulchersManager;
-import fgt.gameserver.data.manager.GrandBossManager;
-import fgt.gameserver.data.manager.HeroManager;
-import fgt.gameserver.data.manager.LotteryManager;
-import fgt.gameserver.data.manager.PartyMatchRoomManager;
-import fgt.gameserver.data.manager.PetitionManager;
-import fgt.gameserver.data.manager.RaidBossManager;
-import fgt.gameserver.data.manager.RaidPointManager;
-import fgt.gameserver.data.manager.SevenSignsManager;
-import fgt.gameserver.data.manager.ZoneManager;
-import fgt.gameserver.data.sql.AutoSpawnTable;
-import fgt.gameserver.data.sql.BookmarkTable;
-import fgt.gameserver.data.sql.ClanTable;
-import fgt.gameserver.data.sql.PlayerInfoTable;
-import fgt.gameserver.data.sql.ServerMemoTable;
-import fgt.gameserver.data.sql.SpawnTable;
-import fgt.gameserver.data.xml.AdminData;
-import fgt.gameserver.data.xml.AnnouncementData;
-import fgt.gameserver.data.xml.ArmorSetData;
-import fgt.gameserver.data.xml.AugmentationData;
-import fgt.gameserver.data.xml.DoorData;
-import fgt.gameserver.data.xml.FishData;
-import fgt.gameserver.data.xml.HennaData;
-import fgt.gameserver.data.xml.HerbDropData;
-import fgt.gameserver.data.xml.InstantTeleportData;
-import fgt.gameserver.data.xml.ItemData;
-import fgt.gameserver.data.xml.MapRegionData;
-import fgt.gameserver.data.xml.MultisellData;
-import fgt.gameserver.data.xml.NewbieBuffData;
-import fgt.gameserver.data.xml.NpcData;
-import fgt.gameserver.data.xml.PlayerData;
-import fgt.gameserver.data.xml.PlayerLevelData;
-import fgt.gameserver.data.xml.RecipeData;
-import fgt.gameserver.data.xml.ScriptData;
-import fgt.gameserver.data.xml.SkillTreeData;
-import fgt.gameserver.data.xml.SoulCrystalData;
-import fgt.gameserver.data.xml.SpellbookData;
-import fgt.gameserver.data.xml.StaticObjectData;
-import fgt.gameserver.data.xml.SummonItemData;
-import fgt.gameserver.data.xml.TeleportData;
-import fgt.gameserver.data.xml.WalkerRouteData;
+import fgt.gameserver.data.manager.*;
+import fgt.gameserver.data.sql.*;
+import fgt.gameserver.data.xml.*;
 import fgt.gameserver.geoengine.GeoEngine;
-import fgt.gameserver.handler.AdminCommandHandler;
-import fgt.gameserver.handler.ChatHandler;
-import fgt.gameserver.handler.ItemHandler;
-import fgt.gameserver.handler.SkillHandler;
-import fgt.gameserver.handler.TargetHandler;
-import fgt.gameserver.handler.UserCommandHandler;
+import fgt.gameserver.handler.*;
 import fgt.gameserver.idfactory.IdFactory;
 import fgt.gameserver.model.World;
-import fgt.gameserver.model.boat.BoatGiranTalking;
-import fgt.gameserver.model.boat.BoatGludinRune;
-import fgt.gameserver.model.boat.BoatInnadrilTour;
-import fgt.gameserver.model.boat.BoatRunePrimeval;
-import fgt.gameserver.model.boat.BoatTalkingGludin;
+import fgt.gameserver.model.boat.*;
 import fgt.gameserver.model.olympiad.Olympiad;
 import fgt.gameserver.model.olympiad.OlympiadGameManager;
 import fgt.gameserver.model.spawn.Spawnlist;
 import fgt.gameserver.network.GameClient;
 import fgt.gameserver.network.GamePacketHandler;
-import fgt.gameserver.taskmanager.AttackStanceTaskManager;
-import fgt.gameserver.taskmanager.DecayTaskManager;
-import fgt.gameserver.taskmanager.GameTimeTaskManager;
-import fgt.gameserver.taskmanager.ItemsOnGroundTaskManager;
-import fgt.gameserver.taskmanager.PvpFlagTaskManager;
-import fgt.gameserver.taskmanager.RandomAnimationTaskManager;
-import fgt.gameserver.taskmanager.ShadowItemTaskManager;
-import fgt.gameserver.taskmanager.WaterTaskManager;
+import fgt.gameserver.taskmanager.*;
 import fgt.util.DeadLockDetector;
 import fgt.util.IPv4Filter;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.util.logging.LogManager;
 
 public class GameServer
 {
@@ -110,6 +42,8 @@ public class GameServer
 	private final SelectorThread<GameClient> _selectorThread;
 	
 	private static GameServer _gameServer;
+
+	private static boolean _FirstRun;
 	
 	public static void main(String[] args) throws Exception
 	{
@@ -216,6 +150,16 @@ public class GameServer
 		RandomAnimationTaskManager.getInstance();
 		ShadowItemTaskManager.getInstance();
 		WaterTaskManager.getInstance();
+		if(Config.MOSTWANTED_ON)
+		{
+			MostWantedUpdateManager.getInstance();
+
+			if(_FirstRun)
+			{
+				LOGGER.info("MostWanted: Эвент запущен!!!");
+				_FirstRun = false;
+			}
+		}
 		
 		StringUtil.printSection("Auto Spawns");
 		AutoSpawnTable.getInstance();

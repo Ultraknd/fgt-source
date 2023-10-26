@@ -1,20 +1,6 @@
 package fgt.gameserver.data;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import fgt.Config;
 import fgt.commons.data.StatSet;
-
 import fgt.gameserver.enums.actors.ClassRace;
 import fgt.gameserver.enums.items.ArmorType;
 import fgt.gameserver.enums.items.WeaponType;
@@ -26,46 +12,26 @@ import fgt.gameserver.model.item.kind.Item;
 import fgt.gameserver.skills.ChanceCondition;
 import fgt.gameserver.skills.L2Skill;
 import fgt.gameserver.skills.basefuncs.FuncTemplate;
-import fgt.gameserver.skills.conditions.Condition;
-import fgt.gameserver.skills.conditions.ConditionElementSeed;
-import fgt.gameserver.skills.conditions.ConditionForceBuff;
-import fgt.gameserver.skills.conditions.ConditionGameTime;
-import fgt.gameserver.skills.conditions.ConditionLogicAnd;
-import fgt.gameserver.skills.conditions.ConditionLogicNot;
-import fgt.gameserver.skills.conditions.ConditionLogicOr;
-import fgt.gameserver.skills.conditions.ConditionPlayerActiveEffectId;
-import fgt.gameserver.skills.conditions.ConditionPlayerActiveSkillId;
-import fgt.gameserver.skills.conditions.ConditionPlayerCharges;
-import fgt.gameserver.skills.conditions.ConditionPlayerHasCastle;
-import fgt.gameserver.skills.conditions.ConditionPlayerHasClanHall;
-import fgt.gameserver.skills.conditions.ConditionPlayerHp;
-import fgt.gameserver.skills.conditions.ConditionPlayerInvSize;
-import fgt.gameserver.skills.conditions.ConditionPlayerIsHero;
-import fgt.gameserver.skills.conditions.ConditionPlayerLevel;
-import fgt.gameserver.skills.conditions.ConditionPlayerMp;
-import fgt.gameserver.skills.conditions.ConditionPlayerPkCount;
-import fgt.gameserver.skills.conditions.ConditionPlayerPledgeClass;
-import fgt.gameserver.skills.conditions.ConditionPlayerRace;
-import fgt.gameserver.skills.conditions.ConditionPlayerSex;
-import fgt.gameserver.skills.conditions.ConditionPlayerState;
-import fgt.gameserver.skills.conditions.ConditionPlayerWeight;
-import fgt.gameserver.skills.conditions.ConditionSkillStats;
-import fgt.gameserver.skills.conditions.ConditionTargetActiveSkillId;
-import fgt.gameserver.skills.conditions.ConditionTargetHpMinMax;
-import fgt.gameserver.skills.conditions.ConditionTargetNpcId;
-import fgt.gameserver.skills.conditions.ConditionTargetRaceId;
-import fgt.gameserver.skills.conditions.ConditionUsingItemType;
+import fgt.gameserver.skills.conditions.*;
 import fgt.gameserver.skills.effects.EffectChanceSkillTrigger;
 import fgt.gameserver.skills.effects.EffectTemplate;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 abstract class DocumentBase
 {
 	static Logger _log = Logger.getLogger(DocumentBase.class.getName());
-	
+
+	private int[] BUFF = {1068,1040,1068,1078,1073,1085,1204,1077,1043,1035,1191,1062,1044,1243,1242,1240,1032,1045,1048,1086,1036,1388,1389,1392,1182,1189,1393,1033,1352,1356,1087,1257,1259,1304,1397,1303,1354,1353,1355,1059,1268,1357,1006,1009,1007,1002,1003,1005,1008,1260,1004,1250,1261,1249,1282,1364,1365,1414,1252,1253,1309,1251,1308,1391,1310,1390,1284,1362,1363,1413,267,270,268,269,265,264,266,306,304,308,305,363,310,349,364,274,277,272,273,276,271,275,309,311,307,365,396,1325,1323,4702,4703,4699,4700};
+
+	int SkillId;
 	private final File _file;
 	protected Map<String, String[]> _tables;
 	
@@ -198,6 +164,8 @@ abstract class DocumentBase
 	protected void attachEffect(Node n, Object template, Condition attachCond)
 	{
 		NamedNodeMap attrs = n.getAttributes();
+		L2Skill skill = (L2Skill) template;
+		SkillId = skill.getId();
 		String name = getValue(attrs.getNamedItem("name").getNodeValue().intern(), template);
 		
 		// Keep this values as default ones, DP needs it
@@ -208,12 +176,7 @@ abstract class DocumentBase
 			count = Integer.decode(getValue(attrs.getNamedItem("count").getNodeValue(), template));
 		
 		if (attrs.getNamedItem("time") != null)
-			if (Config.MULTIPLIERS && attrs.getNamedItem("buff") != null)
-			{
-				//Integer.parseInt(attrs.getNamedItem("time"))
-				time = Integer.parseInt(getValue(String.valueOf(Config.BUFF_TIME), template));
-			}
-		else time = Integer.decode(getValue(attrs.getNamedItem("time").getNodeValue(), template));
+			time = Integer.decode(getValue(attrs.getNamedItem("time").getNodeValue(), template));
 
 		boolean self = false;
 		if (attrs.getNamedItem("self") != null)
