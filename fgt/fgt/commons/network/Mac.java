@@ -1,5 +1,7 @@
 package fgt.commons.network;
 
+import fgt.Config;
+import fgt.commons.logging.CLogger;
 import fgt.commons.pool.ConnectionPool;
 import fgt.gameserver.model.actor.Player;
 import fgt.gameserver.network.GameClient;
@@ -21,9 +23,9 @@ import java.util.logging.Logger;
  * @author Angel
  * 16.07.2017
  */
-public class MacTest
+public class Mac
 {
-    private static Logger _log = Logger.getLogger(MacTest.class.getName());
+    private static final CLogger _log = new CLogger(Mac.class.getName());
 
     private String _mac;
     private String _ip;
@@ -33,9 +35,9 @@ public class MacTest
 
     public final Map<String, String> macs = new ConcurrentHashMap<>();
 
-    public static MacTest getInstance()
+    public static Mac getInstance()
     {
-        return MacTest.SingletonHolder._instance;
+        return Mac.SingletonHolder._instance;
     }
 
     public static void MacTest(String[] args)
@@ -150,7 +152,7 @@ public class MacTest
         }
         catch (Exception e)
         {
-            _log.warning("Не возможно узнать MAC-адрес игрока " + player.getName() + "!");
+            _log.warn("Не возможно узнать MAC-адрес игрока " + player.getName() + "!");
         }
     }
 
@@ -169,7 +171,7 @@ public class MacTest
         }
         catch (Exception e)
         {
-            _log.warning("Ошибка при удалении MAC-адреса икрока " + player.getName() + "!");
+            _log.warn("Ошибка при удалении MAC-адреса икрока " + player.getName() + "!");
         }
     }
 
@@ -184,7 +186,7 @@ public class MacTest
         }
         catch (Exception e)
         {
-            _log.warning("Ошибка при удалении таблицы characters_macs!");
+            _log.warn("Ошибка при удалении таблицы characters_macs!");
         }
     }
 
@@ -205,7 +207,7 @@ public class MacTest
         }
         catch (Exception e)
         {
-            _log.warning("Ошибка бана игрока  " + player.getName() + " по MAC-адресу!");
+            _log.warn("Ошибка бана игрока  " + player.getName() + " по MAC-адресу!");
         }
     }
 
@@ -263,13 +265,13 @@ public class MacTest
 
     private static class SingletonHolder
     {
-        protected static final MacTest _instance;
+        protected static final Mac _instance;
 
         static
         {
             try
             {
-                _instance = new MacTest();
+                _instance = new Mac();
             }
             catch (Exception e)
             {
