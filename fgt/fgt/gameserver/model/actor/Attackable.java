@@ -183,6 +183,18 @@ public class Attackable extends Npc
 	{
 		forceRunStance();
 		getAggroList().addDamageHate(creature, 0, hate);
+
+		if (Config.MOBS_USE_SOULSHOTS)
+		{
+			Rnd.chance(Config.MOBS_SOULSHOT_CHANCE);
+			rechargeShots(true, false);
+		}
+
+		if (Config.MOBS_USE_SPIRITSHOTS)
+		{
+			Rnd.chance(Config.MOBS_SPIRITSHOT_CHANCE);
+			rechargeShots(false, true);
+		}
 		getAI().tryToAttack(creature);
 	}
 	

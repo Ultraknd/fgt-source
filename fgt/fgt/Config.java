@@ -40,6 +40,13 @@ public final class Config
 
 	public static int MOBSLOOTERS_CHANCE;
 
+	/** Mobs use Soul/Spirit Shots =) */
+	public static boolean MOBS_USE_SOULSHOTS;
+	public static int MOBS_SOULSHOT_CHANCE;
+	public static boolean MOBS_USE_SPIRITSHOTS;
+	public static int MOBS_SPIRITSHOT_CHANCE;
+	public static int MOB_LEVEL_FOR_USE_SHOTS;
+
 	/** Auction */
 	public static boolean AUCTION_ENABLE;
 	public static boolean AUCTION_ALLOW_SALE_AUGUMENT_ITEMS;
@@ -769,6 +776,13 @@ public final class Config
 		/** Мобы-воры **/
 		MOBSLOOTERS = mods.getProperty("MonstersLooters", false);
 		MOBSLOOTERS_CHANCE = mods.getProperty("MonstersLootersChance", 50);
+
+		/** Mobs SoulShots **/
+		MOBS_USE_SOULSHOTS = mods.getProperty("MobsCanUseSoulShots", false);
+		MOBS_SOULSHOT_CHANCE = mods.getProperty("MobsSoulShotsChance", 50);
+		MOBS_USE_SPIRITSHOTS = mods.getProperty("MobsCanUseSpiritShots", false);
+		MOBS_SPIRITSHOT_CHANCE = mods.getProperty("MobsSpiritShotsChance", 50);
+		MOB_LEVEL_FOR_USE_SHOTS = mods.getProperty("MobsLvlForUseShots", 40);
 	}
 
 	/**
