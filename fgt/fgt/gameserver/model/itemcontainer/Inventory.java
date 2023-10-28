@@ -507,7 +507,7 @@ public abstract class Inventory extends ItemContainer
 				setPaperdollItem(Paperdoll.RHAND, item);
 				break;
 			
-			case Item.SLOT_L_EAR:
+			/*case Item.SLOT_L_EAR:
 			case Item.SLOT_R_EAR:
 			case Item.SLOT_L_EAR | Item.SLOT_R_EAR:
 				if (getItemFrom(Paperdoll.LEAR) == null)
@@ -537,6 +537,49 @@ public abstract class Inventory extends ItemContainer
 					if (getItemIdFrom(Paperdoll.RFINGER) == item.getItemId())
 						setPaperdollItem(Paperdoll.LFINGER, item);
 					else if (getItemIdFrom(Paperdoll.LFINGER) == item.getItemId())
+						setPaperdollItem(Paperdoll.RFINGER, item);
+					else
+						setPaperdollItem(Paperdoll.LFINGER, item);
+				}
+				break;*/
+			case Item.SLOT_L_EAR:
+			case Item.SLOT_R_EAR:
+			case Item.SLOT_L_EAR | Item.SLOT_R_EAR:
+				if (getItemFrom(Paperdoll.LEAR) == null)
+					setPaperdollItem(Paperdoll.LEAR, item);
+				else if (getItemFrom(Paperdoll.REAR) == null)
+					setPaperdollItem(Paperdoll.REAR, item);
+				else
+				{
+					if (getItemFrom(Paperdoll.REAR).getItemId() == item.getItemId())
+						setPaperdollItem(Paperdoll.LEAR, item);
+					else if (getItemFrom(Paperdoll.LEAR).getItemId() == item.getItemId())
+						setPaperdollItem(Paperdoll.REAR, item);
+					else if (!(getItemFrom(Paperdoll.LEAR).isEpic()) && item.isEpic())
+						setPaperdollItem(Paperdoll.LEAR, item);
+					else if ((getItemFrom(Paperdoll.LEAR).isEpic()) && !(getItemFrom(Paperdoll.REAR).isEpic()) && item.isEpic())
+						setPaperdollItem(Paperdoll.REAR, item);
+					else
+						setPaperdollItem(Paperdoll.LEAR, item);
+				}
+				break;
+
+			case Item.SLOT_L_FINGER:
+			case Item.SLOT_R_FINGER:
+			case Item.SLOT_L_FINGER | Item.SLOT_R_FINGER:
+				if (getItemFrom(Paperdoll.LFINGER) == null)
+					setPaperdollItem(Paperdoll.LFINGER, item);
+				else if (getItemFrom(Paperdoll.RFINGER) == null)
+					setPaperdollItem(Paperdoll.RFINGER, item);
+				else
+				{
+					if (getItemFrom(Paperdoll.RFINGER).getItemId() == item.getItemId())
+						setPaperdollItem(Paperdoll.LFINGER, item);
+					else if (getItemFrom(Paperdoll.LFINGER).getItemId() == item.getItemId())
+						setPaperdollItem(Paperdoll.RFINGER, item);
+					else if (!(getItemFrom(Paperdoll.LFINGER).isEpic()) && item.isEpic())
+						setPaperdollItem(Paperdoll.LFINGER, item);
+					else if ((getItemFrom(Paperdoll.LFINGER).isEpic()) && !(getItemFrom(Paperdoll.RFINGER).isEpic()) && item.isEpic())
 						setPaperdollItem(Paperdoll.RFINGER, item);
 					else
 						setPaperdollItem(Paperdoll.LFINGER, item);

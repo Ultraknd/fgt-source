@@ -3,6 +3,8 @@ package fgt.gameserver.model.item.instance;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.ReentrantLock;
@@ -1274,5 +1276,18 @@ public final class ItemInstance extends WorldObject implements Runnable, Compara
 			return time;
 		
 		return Integer.compare(item.getObjectId(), getObjectId());
+	}
+
+	/** Return true if item isEpic
+	 *  @return isEpic() = true
+	 */
+	public boolean isEpic()
+	{
+		// EPIC
+		String[] array = {"6656", "6658", "6659", "6660", "6661", "6662"};
+		ArrayList<String> list = new ArrayList<String>();
+		Collections.addAll(list, array);
+		int itemId = this.getItemId();
+		return list.contains(itemId);
 	}
 }
