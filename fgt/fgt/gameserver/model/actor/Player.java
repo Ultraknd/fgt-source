@@ -2725,6 +2725,25 @@ public final class Player extends Playable
 						if (++dropCount >= dropLimit)
 							break;
 					}
+
+					// Мобы-воры =)
+					if ((killer instanceof Monster) && Config.MOBSLOOTERS)
+					{
+						if (Rnd.chance(Config.MOBSLOOTERS_CHANCE))
+						{
+							if (!(CursedWeaponManager.getInstance().isCursed(itemDrop.getItemId())))
+							{
+								((Attackable) killer).giveItem(itemDrop, true);
+								World.getInstance().removeObject(itemDrop);
+								World.getInstance().removeObject(itemDrop);
+								((Attackable) killer).broadcastPacket(new CreatureSay(((Attackable) killer).getObjectId(), SayType.ALL, ((Attackable) killer).getName(), "Что упало - то пропало!"));
+								SystemMessage msg = SystemMessage.getSystemMessage(SystemMessageId.ATTENTION_S1_PICKED_UP_S2);
+								msg.addString(((Attackable) killer).getName());
+								msg.addItemName(itemDrop.getItemId());
+								broadcastPacketInRadius(msg, 1400);
+							}
+						}
+					}
 				}
 			}
 		}

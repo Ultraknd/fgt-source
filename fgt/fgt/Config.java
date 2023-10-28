@@ -35,6 +35,11 @@ public final class Config
 	public static final String AUCTION_FILE = "./config/CharacterAuction.properties";
 
 
+	/** Мобы-воры by Angel It's EVIL =) */
+	public static boolean MOBSLOOTERS;
+
+	public static int MOBSLOOTERS_CHANCE;
+
 	/** Auction */
 	public static boolean AUCTION_ENABLE;
 	public static boolean AUCTION_ALLOW_SALE_AUGUMENT_ITEMS;
@@ -760,6 +765,10 @@ public final class Config
 		DONT_DESTROY_SS = mods.getProperty("DontDestroySS", false);
 		DONT_DESTROY_ARROWS = mods.getProperty("DontDestroyArrows", false);
 		DONT_USE_PET_HUNGRY = mods.getProperty("DontPetsHungry", false);
+
+		/** Мобы-воры **/
+		MOBSLOOTERS = mods.getProperty("MonstersLooters", false);
+		MOBSLOOTERS_CHANCE = mods.getProperty("MonstersLootersChance", 50);
 	}
 
 	/**

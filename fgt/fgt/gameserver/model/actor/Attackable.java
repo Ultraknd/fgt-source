@@ -3,6 +3,7 @@ package fgt.gameserver.model.actor;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 
 import fgt.commons.pool.ThreadPool;
 import fgt.commons.random.Rnd;
@@ -12,6 +13,7 @@ import fgt.Config;
 import fgt.gameserver.enums.IntentionType;
 import fgt.gameserver.enums.ScriptEventType;
 import fgt.gameserver.enums.ZoneId;
+import fgt.gameserver.enums.items.ItemLocation;
 import fgt.gameserver.geoengine.GeoEngine;
 import fgt.gameserver.model.WorldObject;
 import fgt.gameserver.model.actor.ai.type.AttackableAI;
@@ -34,6 +36,8 @@ import fgt.gameserver.skills.L2Skill;
  */
 public class Attackable extends Npc
 {
+	// Инвентарь для мобов-воров
+	private List <ItemInstance> _inventory;
 	private final AggroList _aggroList = new AggroList(this);
 	
 	private final Set<Creature> _attackedBy = ConcurrentHashMap.newKeySet();
@@ -386,6 +390,39 @@ public class Attackable extends Npc
 			
 			// Check if the actor is Aggressive
 			return ((allowPeaceful || isAggressive()) && GeoEngine.getInstance().canSeeTarget(this, target));
+		}
+	}
+
+	/** Мобы-воры */
+	public void giveItem(ItemInstance item, boolean store)
+	{
+		if(_inventory == null)
+			_inventory = new ArrayList<>();
+
+		synchronized (_inventory)
+		{
+			if(item.isStackable())
+			{
+				for(ItemInstance i : _inventory)
+				{
+					if(i.getItemId() == item.getItemId())
+					{
+						i.setCount(item.getCount() + i.getCount());
+						if(store)
+							i.updateDatabase();
+						return;
+					}
+				}
+			}
+
+			_inventory.add(item);
+
+			if(store)
+			{
+				item.setOwnerId(getNpcId());
+				item.setLocation(ItemLocation.MONSTER);
+				item.updateDatabase();
+			}
 		}
 	}
 }

@@ -10,5 +10,6 @@ public enum ItemLocation
 	PET,
 	PET_EQUIP,
 	LEASE,
-	FREIGHT
+	FREIGHT,
+	MONSTER
 }
